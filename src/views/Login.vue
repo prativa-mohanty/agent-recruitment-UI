@@ -17,30 +17,7 @@
           <!-- Logo -->
           <div class="text-center mb-8">
             <div class="w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200">
-  <defs>
-    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#9a4ef9" />
-      <stop offset="100%" stop-color="#5b2cc5" />
-    </linearGradient>
-  </defs>
-  <circle cx="50" cy="50" r="30" fill="none" stroke="url(#gradient)" stroke-width="6" />
-  <path
-    d="M35 50 A15 15 0 0 1 65 50"
-    fill="none"
-    stroke="url(#gradient)"
-    stroke-width="6"
-    stroke-linecap="round"
-  />
-  <path
-    d="M30 50 A20 20 0 0 1 70 50"
-    fill="none"
-    stroke="url(#gradient)"
-    stroke-width="4"
-    stroke-linecap="round"
-  />
-</svg>
-
+              <!-- Your existing SVG logo -->
             </div>
             <h2 class="text-2xl font-bold text-gray-800">LOGIN</h2>
             <p class="text-gray-500 text-sm">Welcome to the website</p>
@@ -48,14 +25,14 @@
 
           <!-- Login Form -->
           <form @submit.prevent="handleLogin" class="space-y-6">
-            <!-- Username Input -->
+            <!-- Email Input (changed from username) -->
             <div>
               <div class="relative group">
                 <input
-                  v-model="username"
-                  type="text"
-                  placeholder="Username"
-                  class="w-72 px-3 py-2 bg-gradient-to-r from-purple-200 to-purple-600 rounded-2xl focus:outline-none focus:ring-1 focus:w-80  focus:ring-purple-600 transition-transform transform scale-100 group-hover:scale-105 focus:scale-105 pl-10 text-sm"
+                  v-model="email"
+                  type="email"
+                  placeholder="Email"
+                  class="w-72 px-3 py-2 bg-gradient-to-r from-purple-200 to-purple-600 rounded-2xl focus:outline-none focus:ring-1 focus:w-80 focus:ring-purple-600 transition-transform transform scale-100 group-hover:scale-105 focus:scale-105 pl-10 text-sm"
                   required
                 />
                 <span class="absolute left-3 top-1/2 -translate-y-1/2 text-purple-600">
@@ -99,6 +76,11 @@
               {{ error }}
             </div>
 
+            <!-- Loading Indicator -->
+            <div v-if="loading" class="text-center text-purple-600">
+              Loading...
+            </div>
+
             <!-- Remember Me and Forgot Password -->
             <div class="flex items-center justify-between text-sm">
               <label class="flex items-center text-gray-600">
@@ -110,24 +92,21 @@
 
             <!-- Login Button -->
             <div class="flex justify-center">
-  <button
-    type="submit"
-    @click.prevent="handleLogin"
-    class="relative w-56 py-1 px-2 m-8 overflow-hidden rounded-lg border-2 font-medium border-purple-600 text-purple-600 cursor-pointer group transition-all"
-  >
-    <span 
-      class="absolute w-56 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-purple-600 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease-in-out"
-    ></span>
-    <span 
-      class="relative text-purple-600 transition-all duration-300 group-hover:text-white"
-    >
-      LOGIN
-    </span>
-  </button>
-</div>
-
-
-
+              <button
+                type="submit"
+                :disabled="loading"
+                class="relative w-56 py-1 px-2 m-8 overflow-hidden rounded-lg border-2 font-medium border-purple-600 text-purple-600 cursor-pointer group transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span 
+                  class="absolute w-56 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-purple-600 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease-in-out"
+                ></span>
+                <span 
+                  class="relative text-purple-600 transition-all duration-300 group-hover:text-white"
+                >
+                  {{ loading ? 'LOGGING IN...' : 'LOGIN' }}
+                </span>
+              </button>
+            </div>
           </form>
         </div>
       </div>
@@ -136,14 +115,17 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'LoginPage',
   data() {
     return {
-      username: '',
+      email: '',
       password: '',
       rememberMe: false,
-      error: ''
+      error: '',
+      loading: false
     }
   },
   created() {
@@ -154,38 +136,57 @@ export default {
     }
   },
   methods: {
-    handleLogin() {
-      // Check for static credentials
-      if (this.username === 'agent' && this.password === 'agent') {
+    async handleLogin() {
+      try {
+        this.loading = true;
+        this.error = '';
+
+        const response = await axios.post('http://localhost:8400/api/v1/users/login', {
+          email: this.email,
+          password: this.password
+        });
+
+        // Assuming the API returns a token in the response
+        const token = response.data.token; // Adjust based on your API response structure
+        
         // Store auth token
-        localStorage.setItem('token', 'dummy-auth-token')
+        localStorage.setItem('token', token);
         
-        // Clear any previous error
-        this.error = ''
-        
-        // Store username if remember me is checked
+        // Store email if remember me is checked
         if (this.rememberMe) {
-          localStorage.setItem('rememberedUser', this.username)
+          localStorage.setItem('rememberedUser', this.email);
         } else {
-          localStorage.removeItem('rememberedUser')
+          localStorage.removeItem('rememberedUser');
         }
         
         // Redirect to recruitment page
-        this.$router.push('/recruitment')
-      } else {
-        // Show error message for invalid credentials
-        this.error = 'Invalid username or password'
+        this.$router.push('/recruitment');
+      } catch (error) {
+        // Handle different types of errors
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          this.error = error.response.data.message || 'Invalid credentials';
+        } else if (error.request) {
+          // The request was made but no response was received
+          this.error = 'Unable to connect to the server';
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          this.error = 'An error occurred while logging in';
+        }
         
-        // Clear password field
-        this.password = ''
+        // Clear password field on error
+        this.password = '';
+      } finally {
+        this.loading = false;
       }
     }
   },
   mounted() {
-    // Check for remembered username
+    // Check for remembered user
     const rememberedUser = localStorage.getItem('rememberedUser')
     if (rememberedUser) {
-      this.username = rememberedUser
+      this.email = rememberedUser
       this.rememberMe = true
     }
   }
