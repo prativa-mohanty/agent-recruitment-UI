@@ -11,103 +11,184 @@
         />
       </div>
 
-      <!-- Right side - Login Form -->
-      <div class="w-1/3 p-8">
+      <!-- Right side - Login/Signup Forms -->
+      <div class="w-1/3 p-8 relative">
         <div class="max-w-md mx-auto">
-          <!-- Logo -->
+          <!-- Toggle Switch -->
           <div class="text-center mb-8">
             <div class="w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center">
-              <!-- Your existing SVG logo -->
+              <!-- Your existing logo SVG -->
             </div>
-            <h2 class="text-2xl font-bold text-gray-800">LOGIN</h2>
-            <p class="text-gray-500 text-sm">Welcome to the website</p>
-          </div>
-
-          <!-- Login Form -->
-          <form @submit.prevent="handleLogin" class="space-y-6">
-            <!-- Email Input (changed from username) -->
-            <div>
-              <div class="relative group">
-                <input
-                  v-model="email"
-                  type="email"
-                  placeholder="Email"
-                  class="w-72 px-3 py-2 bg-gradient-to-r from-purple-200 to-purple-600 rounded-2xl focus:outline-none focus:ring-1 focus:w-80 focus:ring-purple-600 transition-transform transform scale-100 group-hover:scale-105 focus:scale-105 pl-10 text-sm"
-                  required
-                />
-                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-purple-600">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    ></path>
-                  </svg>
-                </span>
-              </div>
-            </div>
-
-            <!-- Password Input -->
-            <div>
-              <div class="relative group">
-                <input
-                  v-model="password"
-                  type="password"
-                  placeholder="Password"
-                  class="w-72 px-3 py-2 bg-gradient-to-r from-purple-200 to-purple-600 rounded-2xl focus:outline-none focus:ring-1 focus:w-80 focus:ring-purple-600 transition-transform transform scale-100 group-hover:scale-105 focus:scale-105 pl-10 text-sm"
-                  required
-                />
-                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-purple-600">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                    ></path>
-                  </svg>
-                </span>
-              </div>
-            </div>
-
-            <!-- Error Message -->
-            <div v-if="error" class="text-red-600 text-sm text-center">
-              {{ error }}
-            </div>
-
-            <!-- Loading Indicator -->
-            <div v-if="loading" class="text-center text-purple-600">
-              Loading...
-            </div>
-
-            <!-- Remember Me and Forgot Password -->
-            <div class="flex items-center justify-between text-sm">
-              <label class="flex items-center text-gray-600">
-                <input type="checkbox" v-model="rememberMe" class="mr-2 text-purple-600 focus:ring-purple-500" />
-                Remember me
-              </label>
-              <a href="#" class="text-purple-600 hover:text-purple-700">Forgot Password?</a>
-            </div>
-
-            <!-- Login Button -->
-            <div class="flex justify-center">
-              <button
-                type="submit"
-                :disabled="loading"
-                class="relative w-56 py-1 px-2 m-8 overflow-hidden rounded-lg border-2 font-medium border-purple-600 text-purple-600 cursor-pointer group transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            <div class="inline-flex rounded-lg border-2 border-purple-600 p-1">
+              <button 
+                @click="currentForm = 'login'"
+                :class="['px-4 py-1 rounded-md transition-all duration-300', 
+                  currentForm === 'login' 
+                    ? 'bg-purple-600 text-white' 
+                    : 'text-purple-600']"
               >
-                <span 
-                  class="absolute w-56 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-purple-600 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease-in-out"
-                ></span>
-                <span 
-                  class="relative text-purple-600 transition-all duration-300 group-hover:text-white"
-                >
-                  {{ loading ? 'LOGGING IN...' : 'LOGIN' }}
-                </span>
+                LOGIN
+              </button>
+              <button 
+                @click="currentForm = 'signup'"
+                :class="['px-4 py-1 rounded-md transition-all duration-300', 
+                  currentForm === 'signup' 
+                    ? 'bg-purple-600 text-white' 
+                    : 'text-purple-600']"
+              >
+                SIGNUP
               </button>
             </div>
-          </form>
+          </div>
+
+          <!-- Forms Container with Slide Animation -->
+          <div class="relative overflow-hidden" style="height: 320px;">
+            <!-- Login Form -->
+            <form 
+              @submit.prevent="handleLogin"
+              :class="['absolute w-full transition-all duration-500 transform', 
+                currentForm === 'login' ? 'translate-x-0' : '-translate-x-full']"
+            >
+              <!-- Email Input -->
+              <div class="mb-6">
+                <div class="relative group">
+                  <input
+                    v-model="loginForm.email"
+                    type="email"
+                    placeholder="Email"
+                    class="w-72 px-3 py-2 bg-gradient-to-r from-purple-200 to-purple-600 rounded-2xl focus:outline-none focus:ring-1 focus:w-80 focus:ring-purple-600 transition-transform transform scale-100 group-hover:scale-105 focus:scale-105 pl-10 text-sm"
+                    required
+                  />
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-purple-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Password Input -->
+              <div class="mb-6">
+                <div class="relative group">
+                  <input
+                    v-model="loginForm.password"
+                    type="password"
+                    placeholder="Password"
+                    class="w-72 px-3 py-2 bg-gradient-to-r from-purple-200 to-purple-600 rounded-2xl focus:outline-none focus:ring-1 focus:w-80 focus:ring-purple-600 transition-transform transform scale-100 group-hover:scale-105 focus:scale-105 pl-10 text-sm"
+                    required
+                  />
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-purple-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Remember Me and Forgot Password -->
+              <div class="flex items-center justify-between text-sm mb-6">
+                <label class="flex items-center text-gray-600">
+                  <input type="checkbox" v-model="rememberMe" class="mr-2 text-purple-600 focus:ring-purple-500" />
+                  Remember me
+                </label>
+                <a href="#" class="text-purple-600 hover:text-purple-700">Forgot Password?</a>
+              </div>
+
+              <!-- Login Button -->
+              <div class="flex justify-center">
+                <button
+                  type="submit"
+                  :disabled="loading"
+                  class="relative w-56 py-1 px-2 overflow-hidden rounded-lg border-2 font-medium border-purple-600 text-purple-600 cursor-pointer group transition-all disabled:opacity-50"
+                >
+                  <span class="absolute w-56 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-purple-600 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease"></span>
+                  <span class="relative text-purple-600 transition duration-300 group-hover:text-white">
+                    {{ loading ? 'LOGGING IN...' : 'LOGIN' }}
+                  </span>
+                </button>
+              </div>
+            </form>
+
+            <!-- Signup Form -->
+            <form 
+              @submit.prevent="handleSignup"
+              :class="['absolute w-full transition-all duration-500 transform', 
+                currentForm === 'signup' ? 'translate-x-0' : 'translate-x-full']"
+            >
+              <!-- Full Name Input -->
+              <div class="mb-6">
+                <div class="relative group">
+                  <input
+                    v-model="signupForm.fullName"
+                    type="text"
+                    placeholder="Full Name"
+                    class="w-72 px-3 py-2 bg-gradient-to-r from-purple-200 to-purple-600 rounded-2xl focus:outline-none focus:ring-1 focus:w-80 focus:ring-purple-600 transition-transform transform scale-100 group-hover:scale-105 focus:scale-105 pl-10 text-sm"
+                    required
+                  />
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-purple-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Email Input -->
+              <div class="mb-6">
+                <div class="relative group">
+                  <input
+                    v-model="signupForm.email"
+                    type="email"
+                    placeholder="Email"
+                    class="w-72 px-3 py-2 bg-gradient-to-r from-purple-200 to-purple-600 rounded-2xl focus:outline-none focus:ring-1 focus:w-80 focus:ring-purple-600 transition-transform transform scale-100 group-hover:scale-105 focus:scale-105 pl-10 text-sm"
+                    required
+                  />
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-purple-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Password Input -->
+              <div class="mb-6">
+                <div class="relative group">
+                  <input
+                    v-model="signupForm.password"
+                    type="password"
+                    placeholder="Password"
+                    class="w-72 px-3 py-2 bg-gradient-to-r from-purple-200 to-purple-600 rounded-2xl focus:outline-none focus:ring-1 focus:w-80 focus:ring-purple-600 transition-transform transform scale-100 group-hover:scale-105 focus:scale-105 pl-10 text-sm"
+                    required
+                  />
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-purple-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Signup Button -->
+              <div class="flex justify-center">
+                <button
+                  type="submit"
+                  :disabled="loading"
+                  class="relative w-56 py-1 px-2 overflow-hidden rounded-lg border-2 font-medium border-purple-600 text-purple-600 cursor-pointer group transition-all disabled:opacity-50"
+                >
+                  <span class="absolute w-56 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-purple-600 top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease"></span>
+                  <span class="relative text-purple-600 transition duration-300 group-hover:text-white">
+                    {{ loading ? 'SIGNING UP...' : 'SIGN UP' }}
+                  </span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Error Message -->
+          <div v-if="error" class="text-red-600 text-sm text-center mt-4">
+            {{ error }}
+          </div>
         </div>
       </div>
     </div>
@@ -121,18 +202,19 @@ export default {
   name: 'LoginPage',
   data() {
     return {
-      email: '',
-      password: '',
+      currentForm: 'login',
+      loginForm: {
+        email: '',
+        password: ''
+      },
+      signupForm: {
+        fullName: '',
+        email: '',
+        password: ''
+      },
       rememberMe: false,
       error: '',
       loading: false
-    }
-  },
-  created() {
-    // Check if user is already logged in
-    const token = localStorage.getItem('token')
-    if (token) {
-      this.$router.push('/recruitment')
     }
   },
   methods: {
@@ -142,52 +224,70 @@ export default {
         this.error = '';
 
         const response = await axios.post('http://localhost:8400/api/v1/users/login', {
-          email: this.email,
-          password: this.password
+          email: this.loginForm.email,
+          password: this.loginForm.password
         });
 
-        // Assuming the API returns a token in the response
-        const token = response.data.token; // Adjust based on your API response structure
-        
-        // Store auth token
+        const token = response.data.token;
         localStorage.setItem('token', token);
         
-        // Store email if remember me is checked
         if (this.rememberMe) {
-          localStorage.setItem('rememberedUser', this.email);
+          localStorage.setItem('rememberedUser', this.loginForm.email);
         } else {
           localStorage.removeItem('rememberedUser');
         }
         
-        // Redirect to recruitment page
         this.$router.push('/recruitment');
       } catch (error) {
-        // Handle different types of errors
         if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
           this.error = error.response.data.message || 'Invalid credentials';
         } else if (error.request) {
-          // The request was made but no response was received
           this.error = 'Unable to connect to the server';
         } else {
-          // Something happened in setting up the request that triggered an Error
           this.error = 'An error occurred while logging in';
         }
+        this.loginForm.password = '';
+      } finally {
+        this.loading = false;
+      }
+    },
+    async handleSignup() {
+      try {
+        this.loading = true;
+        this.error = '';
+
+        const response = await axios.post('http://localhost:8400/api/v1/users/createuser', {
+          fullName: this.signupForm.fullName,
+          email: this.signupForm.email,
+          password: this.signupForm.password
+        });
+
+        // After successful signup, switch to login form
+        this.currentForm = 'login';
+        this.loginForm.email = this.signupForm.email;
+        this.signupForm = { fullName: '', email: '', password: '' };
         
-        // Clear password field on error
-        this.password = '';
+        // Show success message
+        this.error = 'Registration successful! Please login.';
+        
+      } catch (error) {
+        if (error.response) {
+          this.error = error.response.data.message || 'Registration failed';
+        } else if (error.request) {
+          this.error = 'Unable to connect to the server';
+        } else {
+          this.error = 'An error occurred during registration';
+        }
       } finally {
         this.loading = false;
       }
     }
   },
   mounted() {
-    // Check for remembered user
-    const rememberedUser = localStorage.getItem('rememberedUser')
+    const rememberedUser = localStorage.getItem('rememberedUser');
     if (rememberedUser) {
-      this.email = rememberedUser
-      this.rememberMe = true
+      this.loginForm.email = rememberedUser;
+      this.rememberMe = true;
     }
   }
 }
