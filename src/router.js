@@ -2,6 +2,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Recruitment from './views/Recruitment.vue'
 import Login from './views/Login.vue'
+import Dashboard from './views/Dashboard.vue'
 
 // Define public routes that don't require authentication
 const publicRoutes = ['/login', '/signup']
@@ -23,6 +24,12 @@ const routes = [
     path: '/recruitment',
     name: 'recruitment',
     component: Recruitment,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/mainDashboard',
+    name: 'recruitmentDashboard',
+    component: Dashboard,
     meta: { requiresAuth: true }
   },
   // Redirect root to login page initially
