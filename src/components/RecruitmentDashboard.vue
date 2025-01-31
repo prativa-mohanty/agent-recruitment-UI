@@ -119,9 +119,12 @@
   
           <!-- Action Buttons -->
           <div class="flex gap-4 mt-4">
-            <button class="text-blue-600 hover:underline">
-              {{ store.uiContent.positionActions.viewCandidates }}
-            </button>
+            <button 
+        class="text-blue-600 hover:underline" 
+        @click="$emit('viewCandidate')"
+    >
+        {{ store.uiContent.positionActions.viewCandidates }}
+    </button>
             <button class="text-blue-600 hover:underline">
               {{ store.uiContent.positionActions.scheduleInterviews }}
             </button>
@@ -129,9 +132,9 @@
               {{ store.uiContent.positionActions.viewPipeline }}
             </button>
             <div class="flex-1 text-right">
-              <button class="text-gray-600 hover:text-gray-900">
-                {{ store.uiContent.positionActions.viewDetails }}
-              </button>
+                <button class="text-gray-600 hover:text-gray-900" @click="$emit('viewDetails')">
+               {{ store.uiContent.positionActions.viewDetails }}
+                </button>
             </div>
           </div>
         </div>
