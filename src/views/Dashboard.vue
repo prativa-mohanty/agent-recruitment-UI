@@ -1,17 +1,7 @@
 <template>
     <div class="dashboard-container">
-      <!-- Header Navigation -->
-      <div class="flex gap-4 p-4 bg-gray-100">
-        <button 
-          v-for="view in views"
-          :key="view.id"
-          @click="currentView = view.id"
-          :class="currentView === view.id ? 'font-bold text-blue-600' : 'text-gray-600'"
-        >
-          <!-- {{ view.name }} -->
-        </button>
-      </div>
-  
+      
+      
       <!-- Dynamic Component Rendering -->
       <component 
         :is="currentComponent"
