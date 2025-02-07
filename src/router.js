@@ -1,6 +1,6 @@
 // router.js
 import { createRouter, createWebHistory } from 'vue-router'
-import Recruitment from './views/Recruitment.vue'
+// import Recruitment from './views/Recruitment.vue'
 import Login from './views/Login.vue'
 import Dashboard from './views/Dashboard.vue'
 
@@ -20,12 +20,12 @@ const routes = [
     component: Login, // Using the same component since we have toggle functionality
     meta: { requiresAuth: false }
   },
-  {
-    path: '/recruitment',
-    name: 'recruitment',
-    component: Recruitment,
-    meta: { requiresAuth: true }
-  },
+  // {
+  //   path: '/recruitment',
+  //   name: 'recruitment',
+  //   component: Recruitment,
+  //   meta: { requiresAuth: true }
+  // },
   {
     path: '/mainDashboard',
     name: 'recruitmentDashboard',
@@ -55,7 +55,7 @@ router.beforeEach((to, from, next) => {
   }
   // If user is authenticated and trying to access login or signup page
   else if (isAuthenticated && (to.path === '/login' || to.path === '/signup')) {
-    next('/recruitment')
+    next('/mainDashboard')
   }
   else {
     next()
