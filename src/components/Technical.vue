@@ -46,7 +46,7 @@
         <!-- AI Analysis -->
         <div class="bg-white rounded-lg shadow p-6">
           <h2 class="text-lg font-semibold mb-4">{{ store.headings.sections.analysis }}</h2>
-          <p class="text-gray-600 mb-6">{{ store.aiAnalysis.summary }}</p>
+          <p class="text-blue-700 mb-6">{{ store.aiAnalysis.summary }}</p>
 
           <!-- Key Strengths -->
           <div class="space-y-4 mb-6">
